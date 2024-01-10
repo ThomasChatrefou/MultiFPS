@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Unity.FPS.UI
 {
-    public class WeaponHUDManager : MonoBehaviour
+    public class WeaponHUDManager : NetComponent
     {
         [Tooltip("UI panel containing the layoutGroup for displaying weapon ammo")]
         public RectTransform AmmoPanel;
@@ -16,7 +16,7 @@ namespace Unity.FPS.UI
         PlayerWeaponsManager m_PlayerWeaponsManager;
         List<AmmoCounter> m_AmmoCounters = new List<AmmoCounter>();
 
-        void Start()
+        protected override void NetStart()
         {
             m_PlayerWeaponsManager = FindObjectOfType<PlayerWeaponsManager>();
             DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManager, WeaponHUDManager>(m_PlayerWeaponsManager,

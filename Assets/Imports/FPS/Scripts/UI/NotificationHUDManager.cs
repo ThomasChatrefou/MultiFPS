@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.FPS.UI
 {
-    public class NotificationHUDManager : MonoBehaviour
+    public class NotificationHUDManager : NetComponent
     {
         [Tooltip("UI panel containing the layoutGroup for displaying notifications")]
         public RectTransform NotificationPanel;
@@ -12,7 +12,7 @@ namespace Unity.FPS.UI
         [Tooltip("Prefab for the notifications")]
         public GameObject NotificationPrefab;
 
-        void Awake()
+        protected override void NetStart()
         {
             PlayerWeaponsManager playerWeaponsManager = FindObjectOfType<PlayerWeaponsManager>();
             DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManager, NotificationHUDManager>(playerWeaponsManager,

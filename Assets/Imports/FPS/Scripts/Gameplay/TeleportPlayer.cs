@@ -4,20 +4,20 @@ using UnityEngine;
 namespace Unity.FPS.Gameplay
 {
     // Debug script, teleports the player across the map for faster testing
-    public class TeleportPlayer : MonoBehaviour
+    public class TeleportPlayer : NetComponent
     {
         public KeyCode ActivateKey = KeyCode.F12;
 
         PlayerCharacterController m_PlayerCharacterController;
 
-        void Awake()
+        protected override void NetStart()
         {
             m_PlayerCharacterController = FindObjectOfType<PlayerCharacterController>();
             DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, TeleportPlayer>(
                 m_PlayerCharacterController, this);
         }
 
-        void Update()
+        protected override void NetUpdate()
         {
             if (Input.GetKeyDown(ActivateKey))
             {

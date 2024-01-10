@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Unity.FPS.UI
 {
-    public class InGameMenuManager : MonoBehaviour
+    public class InGameMenuManager : NetComponent
     {
         [Tooltip("Root GameObject of the menu used to toggle its activation")]
         public GameObject MenuRoot;
@@ -33,7 +33,7 @@ namespace Unity.FPS.UI
         Health m_PlayerHealth;
         FramerateCounter m_FramerateCounter;
 
-        void Start()
+        protected override void NetStart()
         {
             m_PlayerInputsHandler = FindObjectOfType<PlayerInputHandler>();
             DebugUtility.HandleErrorIfNullFindObject<PlayerInputHandler, InGameMenuManager>(m_PlayerInputsHandler,
@@ -60,7 +60,7 @@ namespace Unity.FPS.UI
             FramerateToggle.onValueChanged.AddListener(OnFramerateCounterChanged);
         }
 
-        void Update()
+        protected override void NetUpdate()
         {
             // Lock cursor when clicking outside of menu
             if (!MenuRoot.activeSelf && Input.GetMouseButtonDown(0))

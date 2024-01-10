@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Unity.FPS.UI
 {
-    public class CrosshairManager : MonoBehaviour
+    public class CrosshairManager : NetComponent
     {
         public Image CrosshairImage;
         public Sprite NullCrosshairSprite;
@@ -18,7 +18,7 @@ namespace Unity.FPS.UI
         CrosshairData m_CrosshairDataTarget;
         CrosshairData m_CurrentCrosshair;
 
-        void Start()
+        protected override void NetStart()
         {
             m_WeaponsManager = GameObject.FindObjectOfType<PlayerWeaponsManager>();
             DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManager, CrosshairManager>(m_WeaponsManager, this);
@@ -28,7 +28,7 @@ namespace Unity.FPS.UI
             m_WeaponsManager.OnSwitchedToWeapon += OnWeaponChanged;
         }
 
-        void Update()
+        protected override void NetUpdate()
         {
             UpdateCrosshairPointingAtEnemy(false);
             m_WasPointingAtEnemy = m_WeaponsManager.IsPointingAtEnemy;

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Unity.FPS.UI
 {
-    public class StanceHUD : MonoBehaviour
+    public class StanceHUD : NetComponent
     {
         [Tooltip("Image component for the stance sprites")]
         public Image StanceImage;
@@ -16,7 +16,7 @@ namespace Unity.FPS.UI
         [Tooltip("Sprite to display when crouching")]
         public Sprite CrouchingSprite;
 
-        void Start()
+        protected override void NetStart()
         {
             PlayerCharacterController character = FindObjectOfType<PlayerCharacterController>();
             DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, StanceHUD>(character, this);

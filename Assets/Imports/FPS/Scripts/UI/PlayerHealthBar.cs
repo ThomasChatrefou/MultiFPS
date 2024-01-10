@@ -5,14 +5,14 @@ using UnityEngine.UI;
 
 namespace Unity.FPS.UI
 {
-    public class PlayerHealthBar : MonoBehaviour
+    public class PlayerHealthBar : NetComponent
     {
         [Tooltip("Image component dispplaying current health")]
         public Image HealthFillImage;
 
         Health m_PlayerHealth;
 
-        void Start()
+        protected override void NetStart()
         {
             PlayerCharacterController playerCharacterController =
                 GameObject.FindObjectOfType<PlayerCharacterController>();
@@ -24,7 +24,7 @@ namespace Unity.FPS.UI
                 playerCharacterController.gameObject);
         }
 
-        void Update()
+        protected override void NetUpdate()
         {
             // update health bar value
             HealthFillImage.fillAmount = m_PlayerHealth.CurrentHealth / m_PlayerHealth.MaxHealth;

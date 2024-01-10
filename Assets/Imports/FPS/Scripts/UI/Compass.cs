@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Unity.FPS.UI
 {
-    public class Compass : MonoBehaviour
+    public class Compass : NetComponent
     {
         public RectTransform CompasRect;
         public float VisibilityAngle = 180f;
@@ -22,7 +22,7 @@ namespace Unity.FPS.UI
         float m_WidthMultiplier;
         float m_HeightOffset;
 
-        void Awake()
+        protected override void NetStart()
         {
             PlayerCharacterController playerCharacterController = FindObjectOfType<PlayerCharacterController>();
             DebugUtility.HandleErrorIfNullFindObject<PlayerCharacterController, Compass>(playerCharacterController,
@@ -33,7 +33,7 @@ namespace Unity.FPS.UI
             m_HeightOffset = -CompasRect.rect.height / 2;
         }
 
-        void Update()
+        protected override void NetUpdate()
         {
             // this is all very WIP, and needs to be reworked
             foreach (var element in m_ElementsDictionnary)

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Unity.FPS.UI
 {
-    public class FeedbackFlashHUD : MonoBehaviour
+    public class FeedbackFlashHUD : NetComponent
     {
         [Header("References")] [Tooltip("Image component of the flash")]
         public Image FlashImage;
@@ -45,7 +45,7 @@ namespace Unity.FPS.UI
         Health m_PlayerHealth;
         GameFlowManager m_GameFlowManager;
 
-        void Start()
+        protected override void NetStart()
         {
             // Subscribe to player damage events
             PlayerCharacterController playerCharacterController = FindObjectOfType<PlayerCharacterController>();
@@ -63,7 +63,7 @@ namespace Unity.FPS.UI
             m_PlayerHealth.OnHealed += OnHealed;
         }
 
-        void Update()
+        protected override void NetUpdate()
         {
             if (m_PlayerHealth.IsCritical())
             {
