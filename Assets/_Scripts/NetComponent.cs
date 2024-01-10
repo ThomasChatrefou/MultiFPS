@@ -1,8 +1,6 @@
 using Unity.Netcode;
-using UnityEngine;
-//using UnityEngine.SceneManagement;
 
-public class NetComponent : MonoBehaviour
+public class NetComponent : NetworkBehaviour
 {
     protected virtual void NetStart() { }
 
@@ -12,36 +10,38 @@ public class NetComponent : MonoBehaviour
 
     private void Start()
     {
-        NetworkManager.Singleton.OnServerStarted += NetStart;
+        _networkManager = NetworkManager.Singleton;
+
+        if (IsSpawned)
+        {
+            OnSpawn();
+        }
+        else
+        {
+            _networkManager.OnServerStarted += OnSpawn;
+        }
     }
 
     private void Update()
     {
-        if (NetworkManager.Singleton.IsApproved)
+        if (!IsOwner) return;
+
+        NetUpdate();
+    }
+
+    private void OnDisable()
+    {
+        if (!IsSpawned)
         {
-            NetUpdate();
+            _networkManager.OnServerStarted -= NetStart;
         }
     }
 
-    // Trying to resolve networkManager events unsuscribing but it's too late
-    // maybe it could be useful later
+    private void OnSpawn()
+    {
+        if (!IsOwner) return;
+        NetStart();
+    }
 
-    //private void Awake()
-    //{
-    //    SceneManager.sceneUnloaded += OnSceneUnloaded;
-    //}
-
-    //private void OnSceneUnloaded(Scene scene)
-    //{
-    //    if (scene == base.gameObject.scene)
-    //    {
-    //        NetUnload();
-    //        Debug.Log("component unloaded");
-    //    }
-    //}
-
-    //private void OnDisable()
-    //{
-    //    NetUnload();
-    //}
+    private NetworkManager _networkManager;
 }

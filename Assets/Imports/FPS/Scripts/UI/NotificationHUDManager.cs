@@ -46,7 +46,7 @@ namespace Unity.FPS.UI
             }
         }
 
-        void OnDestroy()
+        public override void OnDestroy()
         {
             EventManager.RemoveListener<ObjectiveUpdateEvent>(OnObjectiveUpdateEvent);
         }

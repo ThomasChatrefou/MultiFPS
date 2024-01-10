@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.FPS.Gameplay;
+using UnityEngine;
 
 namespace Unity.FPS.Game
 {
@@ -53,5 +54,16 @@ namespace Unity.FPS.Game
             }
 #endif
         }
+
+#if UNITY_EDITOR
+        private static void PrintIfPlayer(GameObject target, string message)
+        {
+            if (target.TryGetComponent(out PlayerCharacterController component))
+            {
+                Debug.Log(message);
+            }
+        }
+#endif
+
     }
 }

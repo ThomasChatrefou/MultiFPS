@@ -1,13 +1,17 @@
 ﻿using Unity.FPS.Game;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace Unity.FPS.Gameplay
 {
     [RequireComponent(typeof(CharacterController), typeof(PlayerInputHandler), typeof(AudioSource))]
-    public class PlayerCharacterController : MonoBehaviour
+    public class PlayerCharacterController : NetComponent
     {
-        [Header("References")] [Tooltip("Reference to the main camera used for the player")]
+        [Header("References")][Tooltip("Reference to the main camera used for the player")]
+        public Transform PlayerCameraHolder;
+
+        [Tooltip("Reference to the main camera used for the player")]
         public Camera PlayerCamera;
 
         [Tooltip("Audio source for footsteps, jump, etc...")]
@@ -140,7 +144,7 @@ namespace Unity.FPS.Gameplay
                 actorsManager.SetPlayer(gameObject);
         }
 
-        void Start()
+        protected override void NetStart()
         {
             // fetch components on the same gameObject
             m_Controller = GetComponent<CharacterController>();
@@ -168,9 +172,10 @@ namespace Unity.FPS.Gameplay
             // force the crouch state to false when starting
             SetCrouchingState(false, true);
             UpdateCharacterHeight(true);
+            PlayerCamera.gameObject.SetActive(true);
         }
 
-        void Update()
+        protected override void NetUpdate()
         {
             // check for Y kill
             if (!IsDead && transform.position.y < KillHeight)
@@ -283,7 +288,7 @@ namespace Unity.FPS.Gameplay
                 m_CameraVerticalAngle = Mathf.Clamp(m_CameraVerticalAngle, -89f, 89f);
 
                 // apply the vertical angle as a local rotation to the camera transform along its right axis (makes it pivot up and down)
-                PlayerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
+                PlayerCameraHolder.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
             }
 
             // character movement handling
@@ -418,7 +423,7 @@ namespace Unity.FPS.Gameplay
             {
                 m_Controller.height = m_TargetCharacterHeight;
                 m_Controller.center = Vector3.up * m_Controller.height * 0.5f;
-                PlayerCamera.transform.localPosition = Vector3.up * m_TargetCharacterHeight * CameraHeightRatio;
+                PlayerCameraHolder.localPosition = Vector3.up * m_TargetCharacterHeight * CameraHeightRatio;
                 m_Actor.AimPoint.transform.localPosition = m_Controller.center;
             }
             // Update smooth height
@@ -428,7 +433,7 @@ namespace Unity.FPS.Gameplay
                 m_Controller.height = Mathf.Lerp(m_Controller.height, m_TargetCharacterHeight,
                     CrouchingSharpness * Time.deltaTime);
                 m_Controller.center = Vector3.up * m_Controller.height * 0.5f;
-                PlayerCamera.transform.localPosition = Vector3.Lerp(PlayerCamera.transform.localPosition,
+                PlayerCameraHolder.localPosition = Vector3.Lerp(PlayerCameraHolder.localPosition,
                     Vector3.up * m_TargetCharacterHeight * CameraHeightRatio, CrouchingSharpness * Time.deltaTime);
                 m_Actor.AimPoint.transform.localPosition = m_Controller.center;
             }

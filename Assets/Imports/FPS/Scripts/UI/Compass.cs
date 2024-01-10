@@ -35,6 +35,8 @@ namespace Unity.FPS.UI
 
         protected override void NetUpdate()
         {
+            if (m_PlayerTransform == null) return;
+
             // this is all very WIP, and needs to be reworked
             foreach (var element in m_ElementsDictionnary)
             {
