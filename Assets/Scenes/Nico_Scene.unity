@@ -1192,14 +1192,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 20
-  timeBetweenShooting: 0.05
-  spread: 0.02
+  timeBetweenShooting: 0.1
+  spread: 100
   range: 100
   reloadTime: 1
   timeBetweenShots: 0
   magazineSize: 30
-  bulletsPerTap: 0
-  allowButtonHold: 1
+  bulletsPerTap: 1
+  allowButtonHold: 0
   fpsCam: {fileID: 1133940299}
   attackPoint: {fileID: 1402382529}
   whatIsEnemy:
@@ -1207,7 +1207,6 @@ MonoBehaviour:
     m_Bits: 4294967295
   muzzleFlash: {fileID: 1743301284569550, guid: ad2ab49d0a2a17148bd51c93d977bdbc,
     type: 3}
-  bulletHoleGraphic: {fileID: 0}
   camShake: {fileID: 1133940302}
   camShakeMagnitude: 0.1
   camShakeDuration: 0.1
