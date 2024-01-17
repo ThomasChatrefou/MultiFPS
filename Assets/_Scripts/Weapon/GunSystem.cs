@@ -21,7 +21,8 @@ public class GunSystem : MonoBehaviour
     public LayerMask whatIsEnemy;
 
     //Graphics
-    public GameObject muzzleFlash, bulletHoleGraphic;
+    public GameObject muzzleFlash;
+    //public GameObject bulletHoleGraphic;
     public CameraShake camShake;
     public float camShakeMagnitude, camShakeDuration;
     public TextMeshProUGUI text;
@@ -30,13 +31,17 @@ public class GunSystem : MonoBehaviour
     {
         bulletsLeft = magazineSize;
         readyToShoot = true;
+        reloading = false;
     }
     private void Update()
     {
         MyInput();
 
+        Debug.Log( "readyToShoot = " + readyToShoot);
+        Debug.Log("shooting = " + shooting);
+
         //SetText
-        text.SetText(bulletsLeft + " / " + magazineSize);
+        text?.SetText(bulletsLeft + " / " + magazineSize);
     }
     private void MyInput()
     {
@@ -87,7 +92,7 @@ public class GunSystem : MonoBehaviour
         camShake.Shake(camShakeDuration, camShakeMagnitude);
 
         //Graphics
-        Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
+        //Instantiate(bulletHoleGraphic, rayHit.point, Quaternion.Euler(0, 180, 0));
         Instantiate(muzzleFlash, attackPoint.position, Quaternion.identity);
 
         bulletsLeft--;
