@@ -381,6 +381,8 @@ GameObject:
   - component: {fileID: 3296609489571167596}
   - component: {fileID: 4691208148322500315}
   - component: {fileID: 7703915087693979888}
+  - component: {fileID: 593546769514500725}
+  - component: {fileID: 5867649808980801230}
   m_Layer: 0
   m_Name: NW_Player
   m_TagString: Untagged
@@ -545,7 +547,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   StartingWeapons:
-  - {fileID: 8323776800172828795, guid: b318fabc73446b746a1005cede0c4ceb, type: 3}
+  - {fileID: 8323776800172828795, guid: c4386c8962c17d7438aca7248d021ec6, type: 3}
   WeaponCamera: {fileID: 7275646134777303654}
   WeaponParentSocket: {fileID: 5566882558859111376}
   DefaultWeaponPosition: {fileID: 5128805888894782675}
@@ -708,6 +710,30 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &593546769514500725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2299907644848250489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a90729aa548c6f41b8a86c25beec039, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5867649808980801230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2299907644848250489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3714d3e24829ca144b7c8badfb2a8311, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2772452365937875455
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,7 +6,7 @@ using UnityEngine.Events;
 namespace Unity.FPS.Gameplay
 {
     [RequireComponent(typeof(PlayerInputHandler))]
-    public class PlayerWeaponsManager : MonoBehaviour
+    public class PlayerWeaponsManager : NetComponent, ISpawner<WeaponController>
     {
         public enum WeaponSwitchState
         {
@@ -80,9 +80,13 @@ namespace Unity.FPS.Gameplay
         public UnityAction<WeaponController, int> OnAddedWeapon;
         public UnityAction<WeaponController, int> OnRemovedWeapon;
 
+        public SpawnData<WeaponController> SpawningData { get { return m_startingWeaponSpawnData; } }
+
         WeaponController[] m_WeaponSlots = new WeaponController[9]; // 9 available weapon slots
         PlayerInputHandler m_InputHandler;
         PlayerCharacterController m_PlayerCharacterController;
+        ServerPlayer m_Server;
+        SpawnData<WeaponController> m_startingWeaponSpawnData;
         float m_WeaponBobFactor;
         Vector3 m_LastCharacterPosition;
         Vector3 m_WeaponMainLocalPosition;
@@ -93,7 +97,7 @@ namespace Unity.FPS.Gameplay
         WeaponSwitchState m_WeaponSwitchState;
         int m_WeaponSwitchNewWeaponIndex;
 
-        void Start()
+        protected override void NetStart()
         {
             ActiveWeaponIndex = -1;
             m_WeaponSwitchState = WeaponSwitchState.Down;
@@ -106,20 +110,32 @@ namespace Unity.FPS.Gameplay
             DebugUtility.HandleErrorIfNullGetComponent<PlayerCharacterController, PlayerWeaponsManager>(
                 m_PlayerCharacterController, this, gameObject);
 
+            m_Server = GetComponent<ServerPlayer>();
+            DebugUtility.HandleErrorIfNullGetComponent<ServerPlayer, PlayerWeaponsManager>(
+                m_Server, this, gameObject);
+
             SetFov(DefaultFov);
 
             OnSwitchedToWeapon += OnWeaponSwitched;
 
+            m_startingWeaponSpawnData = new SpawnData<WeaponController>()
+            {
+                Anchor = WeaponParentSocket,
+                Lifetime = SpawnData<WeaponController>.INFINITE_LIFETIME,
+                IsChildOfAnchor = true,
+            };
+
             // Add starting weapons
             foreach (var weapon in StartingWeapons)
             {
+                m_startingWeaponSpawnData.Prefab = weapon;
                 AddWeapon(weapon);
             }
 
             SwitchWeapon(true);
         }
 
-        void Update()
+        protected override void NetUpdate()
         {
             // shoot handling
             WeaponController activeWeapon = GetActiveWeapon();
@@ -191,7 +207,7 @@ namespace Unity.FPS.Gameplay
 
 
         // Update various animated features in LateUpdate because it needs to override the animated arm position
-        void LateUpdate()
+        protected override void NetLateUpdate()
         {
             UpdateWeaponAiming();
             UpdateWeaponBob();
@@ -434,36 +450,12 @@ namespace Unity.FPS.Gameplay
             }
 
             // search our weapon slots for the first free one, assign the weapon to it, and return true if we found one. Return false otherwise
-            for (int i = 0; i < m_WeaponSlots.Length; i++)
+            for (int slot = 0; slot < m_WeaponSlots.Length; slot++)
             {
                 // only add the weapon if the slot is free
-                if (m_WeaponSlots[i] == null)
+                if (m_WeaponSlots[slot] == null)
                 {
-                    // spawn the weapon prefab as child of the weapon socket
-                    WeaponController weaponInstance = Instantiate(weaponPrefab, WeaponParentSocket);
-                    weaponInstance.transform.localPosition = Vector3.zero;
-                    weaponInstance.transform.localRotation = Quaternion.identity;
-
-                    // Set owner to this gameObject so the weapon can alter projectile/damage logic accordingly
-                    weaponInstance.Owner = gameObject;
-                    weaponInstance.SourcePrefab = weaponPrefab.gameObject;
-                    weaponInstance.ShowWeapon(false);
-
-                    // Assign the first person layer to the weapon
-                    int layerIndex =
-                        Mathf.RoundToInt(Mathf.Log(FpsWeaponLayer.value,
-                            2)); // This function converts a layermask to a layer index
-                    foreach (Transform t in weaponInstance.gameObject.GetComponentsInChildren<Transform>(true))
-                    {
-                        t.gameObject.layer = layerIndex;
-                    }
-
-                    m_WeaponSlots[i] = weaponInstance;
-
-                    if (OnAddedWeapon != null)
-                    {
-                        OnAddedWeapon.Invoke(weaponInstance, i);
-                    }
+                    m_Server.SpawnWeaponServerRpc(OwnerClientId, slot);
 
                     return true;
                 }
@@ -476,6 +468,11 @@ namespace Unity.FPS.Gameplay
             }
 
             return false;
+        }
+
+        public void FillWeaponSlot(WeaponController controller, int slot)
+        {
+            m_WeaponSlots[slot] = controller;
         }
 
         public bool RemoveWeapon(WeaponController weaponInstance)

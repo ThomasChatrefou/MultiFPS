@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Unity.FPS.Game
 {
-    public abstract class ProjectileBase : MonoBehaviour
+    public abstract class ProjectileBase : NetworkBehaviour
     {
         public GameObject Owner { get; private set; }
         public Vector3 InitialPosition { get; private set; }

@@ -6,7 +6,17 @@ public class NetComponent : NetworkBehaviour
 
     protected virtual void NetUpdate() { }
 
+    protected virtual void NetLateUpdate() { }
+
     protected virtual void NetUnload() { }
+
+    protected void EnsureHasStarted()
+    {
+        if (!_hasStarted)
+        {
+            OnStart();
+        }
+    }
 
     private void Start()
     {
@@ -14,12 +24,20 @@ public class NetComponent : NetworkBehaviour
 
         if (IsSpawned)
         {
-            OnSpawn();
+            OnStart();
         }
         else
         {
-            _networkManager.OnServerStarted += OnSpawn;
+            _networkManager.OnServerStarted += OnStart;
         }
+    }
+
+    private void OnStart()
+    {
+        if (!IsOwner) return;
+
+        _hasStarted = true;
+        NetStart();
     }
 
     private void Update()
@@ -27,6 +45,13 @@ public class NetComponent : NetworkBehaviour
         if (!IsOwner) return;
 
         NetUpdate();
+    }
+
+    private void LateUpdate()
+    {
+        if (!IsOwner) return;
+
+        NetLateUpdate();
     }
 
     private void OnDisable()
@@ -37,11 +62,6 @@ public class NetComponent : NetworkBehaviour
         }
     }
 
-    private void OnSpawn()
-    {
-        if (!IsOwner) return;
-        NetStart();
-    }
-
     private NetworkManager _networkManager;
+    private bool _hasStarted = false;
 }

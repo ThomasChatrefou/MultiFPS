@@ -41,6 +41,17 @@ namespace Unity.FPS.Game
             }
 #endif
         }
+        
+        public static void HandleErrorIfNoComponentFound_StrSource<TO>(int count, string source, GameObject onObject)
+        {
+#if UNITY_EDITOR
+            if (count == 0)
+            {
+                Debug.LogError(source + " expected to find at least one component of type " + typeof(TO) + " on GameObject " +
+                               onObject.name + ", but none were found.");
+            }
+#endif
+        }
 
         public static void HandleWarningIfDuplicateObjects<TO, TS>(int count, Component source, GameObject onObject)
         {
@@ -55,15 +66,29 @@ namespace Unity.FPS.Game
 #endif
         }
 
-#if UNITY_EDITOR
-        private static void PrintIfPlayer(GameObject target, string message)
+        public static void HandleErrorWithCustomMessage<TS>(string message, TS source) where TS : Component
         {
+#if UNITY_EDITOR
+            Debug.LogError("Error: Component of type " + typeof(TS) + " on GameObject " + source.gameObject.name + " : " + message);
+#endif
+        }
+
+        public static void PrintIfPlayer(GameObject target, string message)
+        {
+#if UNITY_EDITOR
             if (target.TryGetComponent(out PlayerCharacterController component))
             {
                 Debug.Log(message);
             }
-        }
 #endif
+        }
+
+        public static void LogNetworkIdNotFound<TS>(ulong id, TS source) where TS : Component
+        {
+#if UNITY_EDITOR
+            HandleErrorWithCustomMessage($"Did not find any object with id ({id})", source);
+#endif
+        }
 
     }
 }
